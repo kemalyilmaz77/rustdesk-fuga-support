@@ -96,8 +96,11 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.carriez.flutter_hbb"
+        // FugaSoft-branded install identity so it never collides with an
+        // official RustDesk install. The Kotlin/JNI namespace stays
+        // com.carriez.flutter_hbb (manifest package) — the Rust core binds to
+        // that class path, so the namespace must NOT change, only applicationId.
+        applicationId "com.fugasoft.remotesupport"
         minSdkVersion 22
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()

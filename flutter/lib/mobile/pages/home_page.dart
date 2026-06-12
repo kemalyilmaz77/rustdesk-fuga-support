@@ -63,13 +63,35 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // FugaSoft RemoteSupport: controlled-side only. Show just the share-screen
     // page (own ID + one-time password + permissions) with no bottom-nav tabs.
+    // A gear opens the full Settings page so unattended options (start-on-boot,
+    // ignore battery optimization, permanent password) stay configurable on
+    // the device itself.
     if (isAndroid) {
       final serverPage = ServerPage();
       return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text(bind.mainGetAppNameSync()),
-          actions: serverPage.appBarActions,
+          title: const Text('FugaSoft Remote'),
+          actions: [
+            ...serverPage.appBarActions,
+            IconButton(
+              tooltip: translate('Settings'),
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                final settingsPage = SettingsPage();
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => Scaffold(
+                    appBar: AppBar(
+                      centerTitle: true,
+                      title: Text(settingsPage.title),
+                      actions: settingsPage.appBarActions,
+                    ),
+                    body: settingsPage,
+                  ),
+                ));
+              },
+            ),
+          ],
         ),
         body: serverPage,
       );
