@@ -61,6 +61,19 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // FugaSoft RemoteSupport: controlled-side only. Show just the share-screen
+    // page (own ID + one-time password + permissions) with no bottom-nav tabs.
+    if (isAndroid) {
+      final serverPage = ServerPage();
+      return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(bind.mainGetAppNameSync()),
+          actions: serverPage.appBarActions,
+        ),
+        body: serverPage,
+      );
+    }
     return WillPopScope(
         onWillPop: () async {
           if (_selectedIndex != 0) {
