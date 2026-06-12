@@ -19,9 +19,9 @@ env:
   VERSION: "1.4.7"
   NDK_VERSION: "r28c"
   VCPKG_COMMIT_ID: "120deac3062162151622ca4860575a33844ba10b"
-  # ---- Self-hosted server baked into the build (public values, not secrets) ----
-  RENDEZVOUS_SERVER: "136.243.115.18"
-  RS_PUB_KEY: "1akYCbuewGtql6GK98dP7UECnVGtbRXEDEGE0wUK4tY="
+  # Self-hosted server + app name are baked directly into hbb_common/src/config.rs
+  # in the "Bake custom server" step below (this RustDesk version does NOT read
+  # RENDEZVOUS_SERVER/RS_PUB_KEY env vars — they are dead, so we patch the source).
 
 jobs:
   build-android:
@@ -85,6 +85,19 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           submodules: recursive
+
+      - name: Bake custom server + app name into hbb_common
+        shell: bash
+        run: |
+          CONF=libs/hbb_common/src/config.rs
+          # Self-hosted rendezvous/relay server (replaces RustDesk's public default)
+          sed -i 's#rs-ny.rustdesk.com#136.243.115.18#' "$CONF"
+          # Matching server public key
+          sed -i 's#OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=#1akYCbuewGtql6GK98dP7UECnVGtbRXEDEGE0wUK4tY=#' "$CONF"
+          # App name -> FugaDesk (title, notifications, config dir)
+          sed -i 's/RwLock::new("RustDesk".to_owned())/RwLock::new("FugaDesk".to_owned())/' "$CONF"
+          echo "---- baked config.rs ----"
+          grep -nE 'RENDEZVOUS_SERVERS|RS_PUB_KEY:|APP_NAME' "$CONF"
 
       - name: Install flutter
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
