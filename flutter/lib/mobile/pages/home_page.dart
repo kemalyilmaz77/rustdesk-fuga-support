@@ -71,7 +71,7 @@ class HomePageState extends State<HomePage> {
       return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text('FugaSoft Remote'),
+          title: const Text('FugaDesk'),
           actions: [
             ...serverPage.appBarActions,
             IconButton(
